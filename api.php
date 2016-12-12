@@ -38,28 +38,29 @@ $app->group('/api', function () {
 
 			// List
 			$this->get('[/]', function ($request, $response, $args) {
-				$c = setupBeanModel( $args['beantype'] );
-				$c->populateProperties( $args['id'] );
 
-				$data = [
-					'beantype' => $args['beantype'],
-					'beanproperties' => $c->properties
-				];
+				try {
 
-				if ( $request->getParams() ) {
+					$c = setupBeanModel( $args['beantype'] );
+					$c->populateProperties( $args['id'] );
+
+					$data = [
+						'beantype' => $args['beantype'],
+						'beanproperties' => $c->properties
+					];
 
 					// Search
 					$search = new Search( $args['beantype'] );
-					$data['beans'] = R::exportAll( $search->find( $request->getParams() ) );
+					$data['search'] = R::exportAll( $search->find( $request->getParams() ) );
 
-				} else {
+					return setResponse($response, 200, false, $data);
 
-					// List of items
-					$data['beans'] = R::exportAll( $c->read() ); // Convert all beans to array
+				} catch (Exception $e) {
+
+					// Error
+					return setResponse($response, 400, $e->getMessage(), []);
 
 				}
-
-				return setResponse($response, 200, false, $data);
 			});
 
 			// Existing bean
