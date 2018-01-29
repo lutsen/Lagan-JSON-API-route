@@ -4,6 +4,16 @@
  * The JSON API routes.
  */
 
+/**
+ * Create JSON response
+ *
+ * @var object $response Slim response object.
+ * @var string $code Error code.
+ * @var string $message Response message.
+ * @var array $data Data of beantype and one or more beans.
+ *
+ * @return string JSON response.
+ */
 function setResponse($response, $code, $message, $data) {
 
 	$return = [];
@@ -50,7 +60,7 @@ $app->group('/api', function () {
 					];
 
 					// Search
-					$search = new Search( $args['beantype'] );
+					$search = new \Lagan\Search( $args['beantype'] );
 					$data['search'] = R::exportAll( $search->find( $request->getParams() ) );
 
 					return setResponse($response, 200, false, $data);
